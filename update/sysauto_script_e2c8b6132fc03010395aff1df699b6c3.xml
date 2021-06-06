@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sysauto_script">
+    <sysauto_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <business_calendar/>
+        <condition/>
+        <conditional>false</conditional>
+        <entered_time>1970-01-01 00:00:00</entered_time>
+        <name>Set Group Org Ownership</name>
+        <offset/>
+        <offset_type/>
+        <run_as display_value="System Administrator">6816f79cc0a8016401c5a33be04be441</run_as>
+        <run_as_tz/>
+        <run_dayofmonth>1</run_dayofmonth>
+        <run_dayofweek>1</run_dayofweek>
+        <run_period/>
+        <run_start>2021-05-16 15:19:31</run_start>
+        <run_time>1970-01-01 00:00:00</run_time>
+        <run_type>on_demand</run_type>
+        <script><![CDATA[var grp = new GlideRecord('sys_user_group');
+var groupDeptsCount = []; //two dimentional array to store the groups' departments with a count
+var grpDepts = [];
+var grpDeptsCount = [];
+grp.addQuery('active', true);
+grp.query();
+while (grp.next()) {
+    groupName = grp.getDisplayValue();
+//	gs.print('GROUP = ' + GroupName);
+	grpMem = new GlideRecord('sys_user_grmember');
+	grpMem.addQuery('group', grp.sys_id);
+	grpMem.addQuery('user.active', true);
+	grpMem.query();
+	
+//	identify if group has 0 members and do something else do while loop
+	
+	while (grpMem.next()) {
+		groupMemberName = grpMem.user.getDisplayValue();
+		groupMemberDept = grpMem.user.department.getDisplayValue();
+		gs.print('MEMBER = ' + groupMemberName + ' [' + groupMemberDept + ']');
+		found = false;
+		// increment counter for an existing dept
+		for (var i = 0; i < grpDeptsCount.length; i++) {			
+			if (grpDepts[i] == groupMemberDept) {
+				found = true;
+				grpDeptsCount[i] += 1;
+				break;
+			}			
+		}
+		// add a new dept to the array with a count of 1
+		if (found == false) {
+			grpDepts[i] = groupMemberDept;
+			grpDeptsCount[i] = 1;
+		}
+	}
+for (var j = 0; j < grpDeptsCount.length; j++) {
+	gs.print(groupName + ' ------->  ' + grpDepts[j] + ' ======> ' + grpDeptsCount[j]);
+}
+	grpDepts= [];
+        grpDeptsCount= []; 
+	// identify dept with highest members and assign it to group as owning org
+	
+}]]></script>
+        <sys_class_name>sysauto_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-05-16 15:20:42</sys_created_on>
+        <sys_id>e2c8b6132fc03010395aff1df699b6c3</sys_id>
+        <sys_mod_count>15</sys_mod_count>
+        <sys_name>Set Group Org Ownership</sys_name>
+        <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
+        <sys_update_name>sysauto_script_e2c8b6132fc03010395aff1df699b6c3</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-05-26 20:14:03</sys_updated_on>
+        <time_zone/>
+        <upgrade_safe>false</upgrade_safe>
+    </sysauto_script>
+</record_update>
